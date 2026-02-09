@@ -28,10 +28,11 @@ function App() {
   };
 
   const handleQuantityChange = (id, newQty) => {
-    if (newQty < 1) return;
+    const num = parseInt(newQty, 10);
+    if (isNaN(num) || num < 1) return;
     setSelection(prev => ({
       ...prev,
-      [id]: parseInt(newQty)
+      [id]: num
     }));
   };
 

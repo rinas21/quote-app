@@ -1,6 +1,49 @@
 # Quote Application
 
-A MERN stack application for generating service quotes.
+A MERN stack application for generating service quotes. Users select services (Web Development, SEO, Social Media Management), adjust quantities, see a real-time price estimate with 10% tax, and submit a quote request that is stored as a Lead in MongoDB.
+
+---
+
+## Design Flow
+
+1. **Landing** – User sees the “Configure Your Plan” screen with three service cards and an empty quote summary.
+2. **Select services** – User clicks a service card to add it (or clicks again to remove). Selected cards show a quantity/duration input.
+3. **Adjust quantity** – For each selected service, user can change the number of units or months. The quote summary updates in real time (subtotal, 10% tax, total).
+4. **Review** – Summary panel shows line items and total. Submit is disabled until at least one service is selected.
+5. **Submit** – User clicks “Send Quote Request”. The app sends a `POST /api/quote` with the selection; the backend validates, calculates totals with 10% tax, saves a Lead to MongoDB, and returns success.
+6. **Feedback** – On success, a message is shown and the selection is cleared. On error, an error message is displayed.
+
+---
+
+## Architecture
+
+- **Frontend (React + Vite)** – `client/`
+  - Single-page form: service selection, quantity inputs, live price summary, submit button.
+  - State: selected services and quantities; derived state for subtotal, tax, total.
+  - On submit: `POST` to backend `/api/quote` with `{ selection: [{ id, quantity }, ...] }`.
+  - Uses `VITE_API_URL` (e.g. `http://localhost:5000`) for the API base URL.
+
+- **Backend (Node.js + Express)** – `server/`
+  - Single route: `POST /api/quote`.
+  - Validates `selection` (array, at least one item; each item: valid `id`, positive integer `quantity`).
+  - Uses in-memory service definitions (Web Dev $500, SEO $300, SMM $200) to compute subtotal, 10% tax, and grand total.
+  - Persists a **Lead** document in MongoDB (services, totals, `createdAt`).
+  - Returns 201 with computed totals on success; 400 for validation errors.
+
+- **Database (MongoDB)** – Lead collection.
+  - Schema: `services[]` (id, name, price, quantity), `totalPrice`, `taxAmount`, `grandTotal`, `createdAt`.
+
+- **Deployment** – Optional Docker Compose: `mongo`, `server`, `client`; `.env` (or `.env.example`) for `MONGO_URI`, `VITE_API_URL`, ports.
+
+```
+┌─────────────┐     POST /api/quote      ┌─────────────┐     mongoose      ┌─────────────┐
+│   Client    │ ───────────────────────► │   Server    │ ────────────────► │  MongoDB    │
+│ (React/Vite)│   { selection: [...] }   │ (Express)   │   Lead.save()     │  (leads)    │
+└─────────────┘ ◄─────────────────────── └─────────────┘                   └─────────────┘
+                  { success, data }
+```
+
+---
 
 ## 🏃 Local Development (Recommended)
 
