@@ -45,7 +45,7 @@ A MERN stack application for generating service quotes. Users select services (W
 
 ---
 
-## 🏃 Local Development (Recommended)
+## Local Development (Recommended)
 
 If you want to run the app locally (without Docker) for development:
 
@@ -72,7 +72,7 @@ Ensure you have a MongoDB instance running locally on `mongodb://localhost:27017
 
 ---
 
-## 🐳 Docker (Deployment / optional)
+## Docker (Deployment / optional)
 
 If you still want to run via Docker (and fix the missing dependency error), you must rebuild to install the new libraries:
 
@@ -86,7 +86,7 @@ docker-compose up --build
 
 ---
 
-## 🔍 Checking the Database (MongoDB)
+##  Checking the Database (MongoDB)
 
 To inspect the saved quotes inside the Docker container:
 
@@ -110,7 +110,7 @@ To inspect the saved quotes inside the Docker container:
 
 ---
 
-## 🧪 Testing the API
+## Testing the API
 
 You can test the quote submission API directly using `curl` or Postman.
 
